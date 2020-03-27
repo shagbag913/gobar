@@ -13,7 +13,7 @@ func setNetStatus() {
         baseDir := "/sys/class/net/"
         netDirs, err := ioutil.ReadDir(baseDir)
         if err != nil {
-            fmt.Println(err.Error())
+            fmt.Fprintln(os.Stderr, err.Error())
             break
         }
 
@@ -22,7 +22,7 @@ func setNetStatus() {
         for _, netDir := range netDirs {
             file, err := os.Open(baseDir + netDir.Name() + "/operstate")
             if err != nil {
-                fmt.Println(err.Error())
+                fmt.Fprintln(os.Stderr, err.Error())
                 continue
             }
 

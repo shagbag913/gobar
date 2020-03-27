@@ -5,6 +5,8 @@ import (
     "os/exec"
     "time"
     "strconv"
+    "fmt"
+    "os"
 )
 
 func setBspwmStatus() {
@@ -12,7 +14,11 @@ func setBspwmStatus() {
 
     for {
         /* TODO: talk directly to socket */
-        socketStatus, _ := exec.Command("bspc", "wm", "--get-status").Output()
+        socketStatus, err := exec.Command("bspc", "wm", "--get-status").Output()
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err.Error())
+            break
+        }
         socketStatusFormatted := reg.ReplaceAllString(string(socketStatus), "")
 
         /* Don't continue if socketStatus hasn't changed */
@@ -43,5 +49,3 @@ func setBspwmStatus() {
         time.Sleep(150 * time.Millisecond)
     }
 }
-
-

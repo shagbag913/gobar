@@ -4,6 +4,8 @@ import (
     "io/ioutil"
     "strconv"
     "time"
+    "fmt"
+    "os"
 )
 
 func getBatteryPercentGlyphIndex(batteryPercentage, overrideIndex int) int {
@@ -37,6 +39,7 @@ func getBatteryPercentWithGlyph(batteryPercentage, overrideIndex int, charging b
 func isCharging() bool {
     status, err := ioutil.ReadFile("/sys/class/power_supply/BAT0/status")
     if err != nil {
+        fmt.Fprintln(os.Stderr, err.Error())
         return false
     }
 
@@ -52,9 +55,13 @@ func setChargeString() {
     for {
         charge, err := ioutil.ReadFile("/sys/class/power_supply/BAT0/capacity")
         if err != nil {
+            fmt.Fprintln(os.Stderr, err.Error())
             break
         }
-        chargeInt, _ := strconv.Atoi(string(charge[:len(charge)-1]))
+        chargeInt, err := strconv.Atoi(string(charge[:len(charge)-1]))
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err.Error())
+        }
 
         isCharging := isCharging()
 
