@@ -39,7 +39,7 @@ func setStatusFromSocket() {
     sock, err := openBspwmSocket()
     if err != nil {
         fmt.Fprintln(os.Stderr, err.Error())
-        bspwmReadStatus = 2
+        bspwmReadStatus = -1
         return
     }
     go readSocket(sock)
@@ -48,7 +48,7 @@ func setStatusFromSocket() {
     _, err = sock.Write(msg)
     if err != nil {
         fmt.Fprintln(os.Stderr, err.Error())
-        bspwmReadStatus = 2
+        bspwmReadStatus = -1
         return
     }
 
@@ -66,6 +66,8 @@ func setBspwmStatus() {
         if bspwmReadStatus == 2 {
             time.Sleep(150 * time.Millisecond)
             continue
+        } else if bspwmReadStatus == -1 {
+            return
         }
 
         socketStatusFormatted := reg.ReplaceAllString(string(bspwmStatusFromSocket), "")
