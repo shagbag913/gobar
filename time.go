@@ -26,7 +26,11 @@ func setTimeString() {
         newTimeString += strconv.Itoa(minute)
 
         if showSeconds {
-            newTimeString += ":" + strconv.Itoa(second)
+            newTimeString += ":"
+            if second < 10 {
+                newTimeString += "0"
+            }
+            newTimeString += strconv.Itoa(second)
         }
 
         if newTimeString != timeString {
