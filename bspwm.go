@@ -68,13 +68,6 @@ func setBspwmStatus() {
             return
         }
 
-        /* Don't continue if bspwmStatusFromSocket hasn't changed */
-        if bspwmStatusFromSocket == lastBspwmStatus {
-            time.Sleep(150 * time.Millisecond)
-            continue
-        }
-        lastBspwmStatus = bspwmStatusFromSocket
-
         newBspwmStatus := ""
 
         wsIndx := 1
