@@ -2,7 +2,6 @@ package main
 
 import (
     "net"
-    "regexp"
     "time"
     "strconv"
     "fmt"
@@ -60,7 +59,6 @@ func setStatusFromSocket() {
 }
 
 func setBspwmStatus() {
-    reg := regexp.MustCompile("[^oOfF]*")
     for {
         setStatusFromSocket()
         if bspwmReadStatus == 2 {
@@ -70,25 +68,26 @@ func setBspwmStatus() {
             return
         }
 
-        socketStatusFormatted := reg.ReplaceAllString(string(bspwmStatusFromSocket), "")
-
-        /* Don't continue if socketStatus hasn't changed */
-        if socketStatusFormatted == lastBspwmStatus {
+        /* Don't continue if bspwmStatusFromSocket hasn't changed */
+        if bspwmStatusFromSocket == lastBspwmStatus {
             time.Sleep(150 * time.Millisecond)
             continue
         }
-        lastBspwmStatus = socketStatusFormatted
+        lastBspwmStatus = bspwmStatusFromSocket
 
         newBspwmStatus := ""
 
-        for i := 0; i < len(socketStatusFormatted); i++ {
-            switch socketStatusFormatted[i] {
+        wsIndx := 1
+        for _, e := range bspwmStatusFromSocket {
+            switch e {
             case 'F':
                 fallthrough
             case 'O':
-                newBspwmStatus += " %{+u}  " + strconv.Itoa(i+1) + "  %{-u} |"
+                newBspwmStatus += " %{+u}  " + strconv.Itoa(wsIndx) + "  %{-u} |"
+                wsIndx++
             case 'o':
-                newBspwmStatus += "   " + strconv.Itoa(i+1) + "   |"
+                newBspwmStatus += "   " + strconv.Itoa(wsIndx) + "   |"
+                wsIndx++
             }
         }
 
