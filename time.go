@@ -5,6 +5,23 @@ import (
     "strconv"
 )
 
+func setDateString() {
+    for {
+        tNow := time.Now()
+        year, month, day := tNow.Date()
+
+        dateString = strconv.Itoa(int(month)) + "/" + strconv.Itoa(day) + "/" + strconv.Itoa(year)
+
+        // Determine how long we can sleep until we have to refresh dateString
+        sleepHours := time.Duration(23 - tNow.Hour()) * time.Hour
+        sleepMinutes := time.Duration(59 - tNow.Minute()) * time.Minute
+        sleepSeconds := time.Duration(60 - tNow.Second()) * time.Second
+        totalSleep := sleepHours + sleepMinutes + sleepSeconds
+
+        time.Sleep(totalSleep)
+    }
+}
+
 func setTimeString() {
     for {
         tNow := time.Now()

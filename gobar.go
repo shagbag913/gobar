@@ -22,6 +22,7 @@ var timeString string
 var chargeString string
 var bspwmStatus string
 var netStatus string
+var dateString string
 
 /* Other */
 var lastBspwmStatus string
@@ -32,6 +33,7 @@ func main() {
     go setChargeString()
     go setBspwmStatus()
     go setNetStatus()
+    go setDateString()
 
     /* Block main thread and let goroutines do everything */
     select { }
@@ -40,13 +42,18 @@ func main() {
 func printBuffer() {
     printBuffer := ""
     rightBuffer := "%{r}"
+    centerBuffer := "%{c}"
 
     if bspwmStatus != "" {
         printBuffer += "%{l}" + bspwmStatus
     }
 
     if timeString != "" {
-        printBuffer += "%{c}" + timeString
+        centerBuffer += timeString + "   |   "
+    }
+
+    if dateString != "" {
+        centerBuffer += dateString + "   |   "
     }
 
     if netStatus != "" {
@@ -55,6 +62,10 @@ func printBuffer() {
 
     if chargeString != "" {
         rightBuffer += chargeString + "   |   "
+    }
+
+    if centerBuffer != "%{c}" {
+        printBuffer += centerBuffer[:len(centerBuffer)-4]
     }
 
     if rightBuffer != "%{r}" {
