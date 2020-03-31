@@ -73,6 +73,8 @@ func setBspwmStatus() {
         wsIndx := 1
         for _, e := range bspwmStatusFromSocket {
             switch e {
+            case 'f':
+                wsIndx++
             case 'F':
                 fallthrough
             case 'O':
