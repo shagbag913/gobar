@@ -68,7 +68,7 @@ func setVolumeString() {
             volumeString = newVolumeString
             printBuffer()
         }
-        time.Sleep(time.Millisecond * 300)
+        time.Sleep(time.Second * 1)
     }
 }
 
