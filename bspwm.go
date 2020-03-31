@@ -8,14 +8,25 @@ import (
 )
 
 var statusFromSocket string
+var socketPath string
 
 func setBspwmStatus() {
+    /* Set socket path */
+    setSocketPath()
+
     /* Start socket listener */
     readBspwmSocket()
 }
 
+func setSocketPath() {
+    socketPath = os.Getenv("BSPWM_SOCKET")
+    if socketPath == "" {
+        socketPath = "/tmp/bspwm_0_0-socket"
+    }
+}
+
 func openBspwmSocket() (net.Conn, error) {
-    sock, err := net.Dial("unix", "/tmp/bspwm_0_0-socket")
+    sock, err := net.Dial("unix", socketPath)
     if err != nil {
         fmt.Fprintln(os.Stderr, err.Error())
         return nil, err
