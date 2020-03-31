@@ -2,15 +2,17 @@ package main
 
 import (
     "net"
-    "time"
     "strconv"
     "fmt"
     "os"
-    "io"
 )
 
-var bspwmStatusFromSocket string
-var bspwmReadStatus int
+var statusFromSocket string
+
+func setBspwmStatus() {
+    /* Start socket listener */
+    readBspwmSocket()
+}
 
 func openBspwmSocket() (net.Conn, error) {
     sock, err := net.Dial("unix", "/tmp/bspwm_0_0-socket")
@@ -21,76 +23,53 @@ func openBspwmSocket() (net.Conn, error) {
     return sock, err
 }
 
-func readSocket(reader io.Reader) {
-    buf := make([]byte, 100)
-    num, _ := reader.Read(buf)
-    statusString := string(buf[:num])
-    if statusString != bspwmStatusFromSocket {
-        bspwmStatusFromSocket = statusString
-        bspwmReadStatus = 1
-    } else {
-        bspwmReadStatus = 2
-    }
-}
-
-func setStatusFromSocket() {
-    bspwmReadStatus = 0
+func readBspwmSocket() {
     sock, err := openBspwmSocket()
     if err != nil {
         fmt.Fprintln(os.Stderr, err.Error())
-        bspwmReadStatus = -1
         return
     }
-    go readSocket(sock)
 
-    msg := []byte("wm\x00--get-status\x00")
-    _, err = sock.Write(msg)
+    /* Subscribe to wm events */
+    _, err = sock.Write([]byte("subscribe\x00"))
     if err != nil {
         fmt.Fprintln(os.Stderr, err.Error())
-        bspwmReadStatus = -1
         return
     }
 
     for {
-        if bspwmReadStatus != 0 {
-            return
+        status := make([]byte, 100)
+        num, err := sock.Read(status)
+        if err != nil {
+            continue
+        }
+        statusString := string(status[:num])
+        if statusFromSocket != statusString {
+            statusFromSocket = statusString
+            printNewBspwmStatusBuffer()
         }
     }
 }
 
-func setBspwmStatus() {
-    for {
-        setStatusFromSocket()
-        if bspwmReadStatus == 2 {
-            time.Sleep(150 * time.Millisecond)
-            continue
-        } else if bspwmReadStatus == -1 {
-            return
+func printNewBspwmStatusBuffer() {
+    wsIndx := 1
+    bspwmStatus = ""
+    for _, e := range statusFromSocket {
+        switch e {
+        case 'f':
+            wsIndx++
+        case 'F':
+            fallthrough
+        case 'O':
+            bspwmStatus += " %{+u}  " + strconv.Itoa(wsIndx) + "  %{-u} |"
+            wsIndx++
+        case 'o':
+            bspwmStatus += "   " + strconv.Itoa(wsIndx) + "   |"
+            wsIndx++
         }
-
-        newBspwmStatus := ""
-
-        wsIndx := 1
-        for _, e := range bspwmStatusFromSocket {
-            switch e {
-            case 'f':
-                wsIndx++
-            case 'F':
-                fallthrough
-            case 'O':
-                newBspwmStatus += " %{+u}  " + strconv.Itoa(wsIndx) + "  %{-u} |"
-                wsIndx++
-            case 'o':
-                newBspwmStatus += "   " + strconv.Itoa(wsIndx) + "   |"
-                wsIndx++
-            }
-        }
-
-        /* Remove ending spacer */
-        newBspwmStatus = newBspwmStatus[:len(newBspwmStatus)-1]
-
-        bspwmStatus = newBspwmStatus
-        printBuffer()
-        time.Sleep(150 * time.Millisecond)
     }
+
+    /* Remove ending spacer */
+    bspwmStatus = bspwmStatus[:len(bspwmStatus)-1]
+    printBuffer()
 }
