@@ -24,6 +24,7 @@ var bspwmStatus string
 var netStatus string
 var dateString string
 var volumeString string
+var brightnessString string
 
 /* Other */
 var lastBspwmStatus string
@@ -36,6 +37,7 @@ func main() {
     go setNetStatus()
     go setDateString()
     go setVolumeString()
+    go setBrightnessString()
 
     /* Block main thread and let goroutines do everything */
     select { }
@@ -56,6 +58,10 @@ func printBuffer() {
 
     if dateString != "" {
         centerBuffer += dateString + "   |   "
+    }
+
+    if brightnessString != "" {
+        rightBuffer += brightnessString + "   |   "
     }
 
     if volumeString != "" {
