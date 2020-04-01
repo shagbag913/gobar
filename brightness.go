@@ -16,13 +16,14 @@ func setBrightnessString() {
         }
 
         brightnessPercentageFromFile := make([]byte, 3)
-        _, err = file.Read(brightnessPercentageFromFile)
+        var num int
+        num, err = file.Read(brightnessPercentageFromFile)
         if err != nil {
             fmt.Fprintln(os.Stderr, err.Error())
             break
         }
 
-        newBrightnessString := " " + string(brightnessPercentageFromFile) + "%"
+        newBrightnessString := " " + string(brightnessPercentageFromFile[:num]) + "%"
         if newBrightnessString != brightnessString {
             brightnessString = newBrightnessString
             printBuffer()
