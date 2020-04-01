@@ -7,9 +7,11 @@ import (
 )
 
 func setBrightnessString() {
+    volFilePath := os.Getenv("HOME") + "/.cache/brightness/percentage"
+
     for {
         /* Fetch brightness from cache file */
-        file, err := os.Open(os.Getenv("HOME") + "/.cache/brightness/percentage")
+        file, err := os.Open(volFilePath)
         if err != nil {
             fmt.Fprintln(os.Stderr, err.Error())
             break
