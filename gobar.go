@@ -26,9 +26,6 @@ var dateString string
 var volumeString string
 var brightnessString string
 
-/* Other */
-var lastBspwmStatus string
-
 func main() {
     /* Initialize goroutines */
     go setTimeString()
