@@ -5,7 +5,6 @@ import (
     "time"
     "strconv"
     "os"
-    "io/ioutil"
     "fmt"
 )
 
@@ -27,13 +26,26 @@ func getVolumeGlyph(percentage int, muted bool) string {
 
 func setVolumeString() {
     volTempPath := os.Getenv("HOME") + "/.cache/volume/percentage"
+    file, err := os.Open(volTempPath)
+    if err != nil {
+        fmt.Fprintln(os.Stderr, err.Error())
+        return
+    }
+    defer file.Close()
 
     for {
         /*
          * Fetch volume from a temp file, so we don't have to poll
          * from ALSA or some wrapper constantly
          */
-        volFromFile, err := ioutil.ReadFile(volTempPath)
+        _, err := file.Seek(0, 0)
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err.Error())
+            break
+        }
+        volFromFile := make([]byte, 4)
+        var num int
+        num, err = file.Read(volFromFile)
         if err != nil {
             fmt.Fprintln(os.Stderr, err.Error())
             break
@@ -41,12 +53,12 @@ func setVolumeString() {
 
         /* If 'M' succeeds the percentage, we're muted */
         muted := false
-        if bytes.Contains(volFromFile, []byte("M")) {
+        if bytes.Contains(volFromFile[:num], []byte("M")) {
             muted = true
-            volFromFile = volFromFile[:len(volFromFile)-1]
+            num--
         }
 
-        percentage, err := strconv.Atoi(string(volFromFile))
+        percentage, err := strconv.Atoi(string(volFromFile[:num]))
         if err != nil {
             fmt.Fprintln(os.Stderr, err.Error())
             break

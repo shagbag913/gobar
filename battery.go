@@ -1,7 +1,6 @@
 package main
 
 import (
-    "io/ioutil"
     "strconv"
     "time"
     "fmt"
@@ -36,14 +35,15 @@ func getBatteryPercentWithGlyph(batteryPercentage, overrideIndex int, charging b
     return chargingString
 }
 
-func isCharging() bool {
-    status, err := ioutil.ReadFile("/sys/class/power_supply/BAT0/status")
+func isCharging(file *os.File) bool {
+    status := make([]byte, 12)
+    var num int
+    num, err := file.Read(status)
     if err != nil {
         fmt.Fprintln(os.Stderr, err.Error())
         return false
     }
-
-    if string(status[:len(status) - 1]) == "Discharging" {
+    if string(status[:num-1]) == "Discharging" {
         return false
     }
 
@@ -52,18 +52,44 @@ func isCharging() bool {
 
 func setChargeString() {
     chargingIndexCounter := -1
+
+    /* Open files */
+    statusFile, err := os.Open("/sys/class/power_supply/BAT0/status")
+    if err != nil {
+        fmt.Fprintln(os.Stderr, err.Error())
+        return
+    }
+    defer statusFile.Close()
+
+    var capacityFile *os.File
+    capacityFile, err = os.Open("/sys/class/power_supply/BAT0/capacity")
+    if err != nil {
+        fmt.Fprintln(os.Stderr, err.Error())
+        return
+    }
+    defer capacityFile.Close()
+
     for {
-        charge, err := ioutil.ReadFile("/sys/class/power_supply/BAT0/capacity")
+        _, err = statusFile.Seek(0, 0)
         if err != nil {
             fmt.Fprintln(os.Stderr, err.Error())
             break
         }
-        chargeInt, err := strconv.Atoi(string(charge[:len(charge)-1]))
+        _, err = capacityFile.Seek(0, 0)
         if err != nil {
             fmt.Fprintln(os.Stderr, err.Error())
+            break
+        }
+        charge := make([]byte, 3)
+        var num int
+        num, err = capacityFile.Read(charge)
+        chargeInt, err := strconv.Atoi(string(charge[:num-1]))
+        if err != nil {
+            fmt.Fprintln(os.Stderr, err.Error())
+            break
         }
 
-        isCharging := isCharging()
+        isCharging := isCharging(statusFile)
 
         if !(isCharging && animateChargeGlyphWhenCharging) {
             /* Reset index counter */
