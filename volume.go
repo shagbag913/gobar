@@ -5,6 +5,7 @@ import (
     "time"
     "strconv"
     "os"
+    "io/ioutil"
     "fmt"
 )
 
@@ -32,16 +33,7 @@ func setVolumeString() {
          * Fetch volume from a temp file, so we don't have to poll
          * from ALSA or some wrapper constantly
          */
-        file, err := os.Open(volTempPath)
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err.Error())
-            break
-        }
-        defer file.Close()
-
-        volFromFile := make([]byte, 4)
-        var num int
-        num, err = file.Read(volFromFile)
+        volFromFile, err := ioutil.ReadFile(volTempPath)
         if err != nil {
             fmt.Fprintln(os.Stderr, err.Error())
             break
@@ -51,13 +43,10 @@ func setVolumeString() {
         muted := false
         if bytes.Contains(volFromFile, []byte("M")) {
             muted = true
-        } else {
-            /* Append random char to end so later logic is simpler */
-            volFromFile = append(volFromFile, 'N')
-            num++
+            volFromFile = volFromFile[:len(volFromFile)-1]
         }
 
-        percentage, err := strconv.Atoi(string(volFromFile[:num-1]))
+        percentage, err := strconv.Atoi(string(volFromFile))
         if err != nil {
             fmt.Fprintln(os.Stderr, err.Error())
             break

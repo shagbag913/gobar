@@ -4,6 +4,7 @@ import (
     "time"
     "fmt"
     "os"
+    "io/ioutil"
 )
 
 func setBrightnessString() {
@@ -11,22 +12,13 @@ func setBrightnessString() {
 
     for {
         /* Fetch brightness from cache file */
-        file, err := os.Open(volFilePath)
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err.Error())
-            break
-        }
-        defer file.Close()
-
-        brightnessPercentageFromFile := make([]byte, 3)
-        var num int
-        num, err = file.Read(brightnessPercentageFromFile)
+        brightnessPercentageFromFile, err := ioutil.ReadFile(volFilePath)
         if err != nil {
             fmt.Fprintln(os.Stderr, err.Error())
             break
         }
 
-        newBrightnessString := " " + string(brightnessPercentageFromFile[:num]) + "%"
+        newBrightnessString := " " + string(brightnessPercentageFromFile) + "%"
         if newBrightnessString != brightnessString {
             brightnessString = newBrightnessString
             printBuffer()

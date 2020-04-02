@@ -20,30 +20,19 @@ func setNetStatus() {
         newNetStatus = ""
 
         for _, netDir := range netDirs {
-            file, err := os.Open(baseDir + netDir.Name() + "/operstate")
+            state, err := ioutil.ReadFile(baseDir + netDir.Name() + "/operstate")
             if err != nil {
                 fmt.Fprintln(os.Stderr, err.Error())
                 continue
             }
 
-            state := make([]byte, 4)
-
-            count, err := file.Read(state)
-            if err != nil {
-                fmt.Println(err.Error())
-                file.Close()
-                continue
-            }
-
-            if count == 3 {
+            if len(state) == 3 {
                 if _, err := os.Stat(baseDir + netDir.Name() + "/wireless"); os.IsNotExist(err) {
                     newNetStatus += "   "
                 } else {
                     newNetStatus += "   "
                 }
             }
-
-            file.Close()
         }
 
         if newNetStatus != "" {
