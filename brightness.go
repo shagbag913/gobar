@@ -16,6 +16,7 @@ func setBrightnessString() {
             fmt.Fprintln(os.Stderr, err.Error())
             break
         }
+        defer file.Close()
 
         brightnessPercentageFromFile := make([]byte, 3)
         var num int

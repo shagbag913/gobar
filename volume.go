@@ -37,6 +37,8 @@ func setVolumeString() {
             fmt.Fprintln(os.Stderr, err.Error())
             break
         }
+        defer file.Close()
+
         volFromFile := make([]byte, 4)
         var num int
         num, err = file.Read(volFromFile)

@@ -31,6 +31,7 @@ func setNetStatus() {
             count, err := file.Read(state)
             if err != nil {
                 fmt.Println(err.Error())
+                file.Close()
                 continue
             }
 
