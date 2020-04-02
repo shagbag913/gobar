@@ -34,7 +34,9 @@ func setBrightnessString() {
         if newBrightnessString != brightnessString {
             brightnessString = newBrightnessString
             printBuffer()
+            time.Sleep(100 * time.Millisecond)
+        } else {
+            time.Sleep(300 * time.Millisecond)
         }
-        time.Sleep(300 * time.Millisecond)
     }
 }
