@@ -91,6 +91,7 @@ func setChargeString() {
 
         isCharging := isCharging(statusFile)
 
+        sleepTime := 10
         if !(isCharging && animateChargeGlyphWhenCharging) {
             /* Reset index counter */
             chargingIndexCounter = -1
@@ -100,6 +101,8 @@ func setChargeString() {
             } else {
                 chargingIndexCounter++
             }
+
+            sleepTime = 2
         }
 
         newChargeString := getBatteryPercentWithGlyph(chargeInt, chargingIndexCounter, isCharging)
@@ -109,6 +112,6 @@ func setChargeString() {
             printBuffer()
         }
 
-        time.Sleep(2 * time.Second)
+        time.Sleep(time.Duration(sleepTime) * time.Second)
     }
 }
