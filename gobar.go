@@ -25,6 +25,7 @@ var netStatus string
 var dateString string
 var volumeString string
 var brightnessString string
+var memoryString string
 
 func main() {
     /* Initialize goroutines */
@@ -35,6 +36,7 @@ func main() {
     go setDateString()
     go setVolumeString()
     go setBrightnessString()
+    go setMemoryString()
 
     /* Block main thread and let goroutines do everything */
     select { }
@@ -55,6 +57,10 @@ func printBuffer() {
 
     if dateString != "" {
         centerBuffer += dateString + "   |   "
+    }
+
+    if memoryString != "" {
+        rightBuffer += memoryString + "   |   "
     }
 
     if brightnessString != "" {
