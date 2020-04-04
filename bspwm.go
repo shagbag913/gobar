@@ -5,6 +5,7 @@ import (
     "strconv"
     "fmt"
     "os"
+    "strings"
 )
 
 var statusFromSocket string
@@ -54,7 +55,7 @@ func readBspwmSocket() {
         if err != nil {
             continue
         }
-        statusString := string(status[:num])
+        statusString := strings.Split(string(status[:num]), "\n")[0]
         if statusFromSocket != statusString {
             statusFromSocket = statusString
             printNewBspwmStatusBuffer()
