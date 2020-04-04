@@ -83,7 +83,7 @@ func setChargeString() {
         charge := make([]byte, 3)
         var num int
         num, err = capacityFile.Read(charge)
-        chargeInt, err := strconv.Atoi(string(charge[:num-1]))
+        chargeInt, err := strconv.Atoi(string(charge[:num]))
         if err != nil {
             fmt.Fprintln(os.Stderr, err.Error())
             break
