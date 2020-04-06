@@ -3,7 +3,6 @@ package main
 import (
     "strconv"
     "time"
-    "fmt"
     "os"
 )
 
@@ -39,8 +38,7 @@ func isCharging(file *os.File) bool {
     status := make([]byte, 12)
     var num int
     num, err := file.Read(status)
-    if err != nil {
-        fmt.Fprintln(os.Stderr, err.Error())
+    if logFatal(err) {
         return false
     }
     if string(status[:num-1]) == "Discharging" {
@@ -55,37 +53,32 @@ func setChargeString() {
 
     /* Open files */
     statusFile, err := os.Open("/sys/class/power_supply/BAT0/status")
-    if err != nil {
-        fmt.Fprintln(os.Stderr, err.Error())
+    if logFatal(err) {
         return
     }
     defer statusFile.Close()
 
     var capacityFile *os.File
     capacityFile, err = os.Open("/sys/class/power_supply/BAT0/capacity")
-    if err != nil {
-        fmt.Fprintln(os.Stderr, err.Error())
+    if logFatal(err) {
         return
     }
     defer capacityFile.Close()
 
     for {
         _, err = statusFile.Seek(0, 0)
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err.Error())
+        if logFatal(err) {
             break
         }
         _, err = capacityFile.Seek(0, 0)
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err.Error())
+        if logFatal(err) {
             break
         }
         charge := make([]byte, 4)
         var num int
         num, err = capacityFile.Read(charge)
         chargeInt, err := strconv.Atoi(string(charge[:num-1]))
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err.Error())
+        if logFatal(err) {
             break
         }
 

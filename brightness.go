@@ -10,51 +10,44 @@ import (
 func setBrightnessString() {
     intelBacklight := "/sys/class/backlight/intel_backlight/"
     brightnessFile, err := os.Open(intelBacklight + "brightness")
-    if err != nil {
-        fmt.Fprintln(os.Stderr, err.Error())
+    if logFatal(err) {
         return
     }
     defer brightnessFile.Close()
 
     maxBrightnessFile, err := os.Open(intelBacklight + "max_brightness")
-    if err != nil {
-        fmt.Fprintln(os.Stderr, err.Error())
+    if logFatal(err) {
         return
     }
 
     maxBrightnessRaw := make([]byte, 4)
     var num int
     num, err = maxBrightnessFile.Read(maxBrightnessRaw)
-    if err != nil {
-        fmt.Fprintln(os.Stderr, err.Error())
+    if logFatal(err) {
         return
     }
     maxBrightnessFile.Close()
 
     var maxBrightness int
     maxBrightness, err = strconv.Atoi(string(maxBrightnessRaw[:num-1]))
-    if err != nil {
-        fmt.Fprintln(os.Stderr, err.Error())
+    if logFatal(err) {
         return
     }
 
     for {
         _, err = brightnessFile.Seek(0, 0)
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err.Error())
+        if logFatal(err) {
             break
         }
 
         brightnessRaw := make([]byte, 4)
         num, err = brightnessFile.Read(brightnessRaw)
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err.Error())
+        if logFatal(err) {
             break
         }
         var brightnessInt int
         brightnessInt, err = strconv.Atoi(string(brightnessRaw[:num-1]))
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err.Error())
+        if logFatal(err) {
             break
         }
         brightnessDiv := float32(brightnessInt) / float32(maxBrightness)

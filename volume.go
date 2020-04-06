@@ -5,7 +5,6 @@ import (
     "time"
     "strconv"
     "os"
-    "fmt"
 )
 
 func getVolumeGlyph(percentage int, muted bool) string {
@@ -27,8 +26,7 @@ func getVolumeGlyph(percentage int, muted bool) string {
 func setVolumeString() {
     volTempPath := os.Getenv("HOME") + "/.cache/volume/percentage"
     file, err := os.Open(volTempPath)
-    if err != nil {
-        fmt.Fprintln(os.Stderr, err.Error())
+    if logFatal(err) {
         return
     }
     defer file.Close()
@@ -39,15 +37,13 @@ func setVolumeString() {
          * from ALSA or some wrapper constantly
          */
         _, err := file.Seek(0, 0)
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err.Error())
+        if logFatal(err) {
             break
         }
         volFromFile := make([]byte, 4)
         var num int
         num, err = file.Read(volFromFile)
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err.Error())
+        if logFatal(err) {
             break
         }
 
@@ -59,8 +55,7 @@ func setVolumeString() {
         }
 
         percentage, err := strconv.Atoi(string(volFromFile[:num]))
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err.Error())
+        if logFatal(err) {
             break
         }
 

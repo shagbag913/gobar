@@ -3,7 +3,6 @@ package main
 import (
     "os"
     "io/ioutil"
-    "fmt"
     "time"
 )
 
@@ -12,8 +11,7 @@ func setNetStatus() {
     for {
         baseDir := "/sys/class/net/"
         netDirs, err := ioutil.ReadDir(baseDir)
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err.Error())
+        if logFatal(err) {
             break
         }
 
@@ -21,8 +19,7 @@ func setNetStatus() {
 
         for _, netDir := range netDirs {
             state, err := ioutil.ReadFile(baseDir + netDir.Name() + "/operstate")
-            if err != nil {
-                fmt.Fprintln(os.Stderr, err.Error())
+            if logFatal(err) {
                 continue
             }
 

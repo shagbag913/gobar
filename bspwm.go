@@ -3,7 +3,6 @@ package main
 import (
     "net"
     "strconv"
-    "fmt"
     "os"
     "strings"
 )
@@ -28,8 +27,7 @@ func setSocketPath() {
 
 func openBspwmSocket() (net.Conn, error) {
     sock, err := net.Dial("unix", socketPath)
-    if err != nil {
-        fmt.Fprintln(os.Stderr, err.Error())
+    if logFatal(err) {
         return nil, err
     }
     return sock, err
@@ -37,15 +35,13 @@ func openBspwmSocket() (net.Conn, error) {
 
 func readBspwmSocket() {
     sock, err := openBspwmSocket()
-    if err != nil {
-        fmt.Fprintln(os.Stderr, err.Error())
+    if logFatal(err) {
         return
     }
 
     /* Subscribe to wm events */
     _, err = sock.Write([]byte("subscribe\x00"))
-    if err != nil {
-        fmt.Fprintln(os.Stderr, err.Error())
+    if logFatal(err) {
         return
     }
 

@@ -10,8 +10,7 @@ import (
 
 func setMemoryString() {
     file, err := os.Open("/proc/meminfo")
-    if err != nil {
-        fmt.Fprintln(os.Stderr, err.Error())
+    if logFatal(err) {
         return
     }
     defer file.Close()
@@ -21,8 +20,7 @@ func setMemoryString() {
         memTotal := make([]byte, 0)
         memAvailable := make([]byte, 0)
         _, err = file.Seek(0, 0)
-        if err != nil {
-            fmt.Fprintln(os.Stderr, err.Error())
+        if logFatal(err) {
             break
         }
         reader := bufio.NewReader(file)
