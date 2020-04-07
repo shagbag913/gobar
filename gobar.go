@@ -4,19 +4,6 @@ import (
     "fmt"
 )
 
-// CONFIGURATION FLAGS
-
-/* Whether to use 12 or 24 hour time */
-var use12HourTime bool = true
-
-/* Whether to show seconds in time */
-var showSeconds bool = false
-
-/* Enable charging animation */
-var animateChargeGlyphWhenCharging = true
-
-// END CONFIGURATION FLAGS
-
 /* Printed bar strings */
 var timeString string
 var chargeString string
