@@ -65,8 +65,11 @@ func setMemoryString() {
         memTotalInt, _ := strconv.Atoi(string(memTotal))
         memAvailableInt, _ := strconv.Atoi(string(memAvailable))
         dec := 1 - float32(memAvailableInt) / float32(memTotalInt)
-        newMemoryString := fmt.Sprintf("%.2f", dec)
-        newMemoryString = " " + newMemoryString[2:] + "%"
+        newMemoryString := fmt.Sprintf("%.2f", dec)[2:]
+        if newMemoryString[0] == '0' {
+            newMemoryString = newMemoryString[1:]
+        }
+        newMemoryString = " " + newMemoryString + "%"
         if newMemoryString != memoryString {
             memoryString = newMemoryString
             printBuffer()
