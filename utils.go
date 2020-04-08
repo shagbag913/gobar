@@ -43,7 +43,7 @@ func formatConfString(str string) string {
     for i := range str {
         if str[i] >= 'a' && str[i] <= 'z' || str[i] <= 'A' && str[i] >= 'Z' {
             newString = append(newString, str[i])
-        } else if str[i] == ';' || str[i] == '=' || str[i] == '_' {
+        } else if str[i] == ';' || str[i] == '=' || str[i] == '_' || str[i] == ',' {
             newString = append(newString, str[i])
         }
     }
