@@ -1,6 +1,7 @@
 package main
 
 import (
+    "strings"
     "fmt"
 )
 
@@ -16,14 +17,32 @@ var memoryString string
 
 func main() {
     /* Initialize goroutines */
-    go setTimeString()
-    go setChargeString()
-    go setBspwmStatus()
-    go setNetStatus()
-    go setDateString()
-    go setVolumeString()
-    go setBrightnessString()
-    go setMemoryString()
+    enabledModules := getConfValue("main;enabled_modules")
+
+    if strings.Contains(enabledModules, "time") {
+        go setTimeString()
+    }
+    if strings.Contains(enabledModules, "battery") {
+        go setChargeString()
+    }
+    if strings.Contains(enabledModules, "bspwm") {
+        go setBspwmStatus()
+    }
+    if strings.Contains(enabledModules, "net") {
+        go setNetStatus()
+    }
+    if strings.Contains(enabledModules, "date") {
+        go setDateString()
+    }
+    if strings.Contains(enabledModules, "volume") {
+        go setVolumeString()
+    }
+    if strings.Contains(enabledModules, "brightness") {
+        go setBrightnessString()
+    }
+    if strings.Contains(enabledModules, "used_memory") {
+        go setMemoryString()
+    }
 
     /* Block main thread and let goroutines do everything */
     select { }
