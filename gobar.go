@@ -22,32 +22,24 @@ var buffers = [3]string{"%{l}", "%{c}", "%{r}"}
 var elementSeperator = "   |   "
 
 func main() {
-    /* Initialize goroutines */
+    /* Map of module names and their corresponding goroutine */
+    moduleMap := map[string]interface{} {
+        "time": setTimeString,
+        "charge": setChargeString,
+        "bspwm": setBspwmStatus,
+        "net": setNetStatus,
+        "date": setDateString,
+        "volume": setVolumeString,
+        "brightness": setBrightnessString,
+        "used_memory": setMemoryString,
+    }
+
     enabledModules := getConfValue("main;enabled_modules")
 
-    if strings.Contains(enabledModules, "time") {
-        go setTimeString()
-    }
-    if strings.Contains(enabledModules, "battery") {
-        go setChargeString()
-    }
-    if strings.Contains(enabledModules, "bspwm") {
-        go setBspwmStatus()
-    }
-    if strings.Contains(enabledModules, "net") {
-        go setNetStatus()
-    }
-    if strings.Contains(enabledModules, "date") {
-        go setDateString()
-    }
-    if strings.Contains(enabledModules, "volume") {
-        go setVolumeString()
-    }
-    if strings.Contains(enabledModules, "brightness") {
-        go setBrightnessString()
-    }
-    if strings.Contains(enabledModules, "used_memory") {
-        go setMemoryString()
+    for moduleString, moduleFunction := range moduleMap {
+        if enabledModules == "" || strings.Contains(enabledModules, moduleString) {
+            go moduleFunction.(func())()
+        }
     }
 
     /* Block main thread and let goroutines do everything */
