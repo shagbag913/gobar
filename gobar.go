@@ -15,6 +15,12 @@ var volumeString string
 var brightnessString string
 var memoryString string
 
+/* Left, center, and right print buffers */
+var buffers = [3]string{"%{l}", "%{c}", "%{r}"}
+
+/* Buffer element seperator */
+var elementSeperator = "   |   "
+
 func main() {
     /* Initialize goroutines */
     enabledModules := getConfValue("main;enabled_modules")
@@ -48,53 +54,42 @@ func main() {
     select { }
 }
 
+func addToBuffer(element string, bufferIndex int) {
+    if element != "" {
+        buffers[bufferIndex] += element + elementSeperator
+    }
+}
+
 func printBuffer() {
     printBuffer := ""
-    rightBuffer := "%{r}"
-    centerBuffer := "%{c}"
 
-    if bspwmStatus != "" {
-        printBuffer += "%{l}" + bspwmStatus
+    /* clear buffers */
+    for i := range buffers {
+        buffers[i] = buffers[i][:4]
     }
 
-    if timeString != "" {
-        centerBuffer += timeString + "   |   "
+    addToBuffer(bspwmStatus, 0)
+    addToBuffer(timeString, 1)
+    addToBuffer(dateString, 1)
+    addToBuffer(memoryString, 2)
+    addToBuffer(brightnessString, 2)
+    addToBuffer(volumeString, 2)
+    addToBuffer(netStatus, 2)
+    addToBuffer(chargeString, 2)
+
+    if buffers[0] != "%{l}" {
+        printBuffer += buffers[0][:len(buffers[0])-len(elementSeperator)]
     }
 
-    if dateString != "" {
-        centerBuffer += dateString + "   |   "
+    if buffers[1] != "%{c}" {
+        printBuffer += buffers[1][:len(buffers[1])-len(elementSeperator)]
     }
 
-    if memoryString != "" {
-        rightBuffer += memoryString + "   |   "
-    }
-
-    if brightnessString != "" {
-        rightBuffer += brightnessString + "   |   "
-    }
-
-    if volumeString != "" {
-        rightBuffer += volumeString + "   |   "
-    }
-
-    if netStatus != "" {
-        rightBuffer += netStatus + "   |   "
-    }
-
-    if chargeString != "" {
-        rightBuffer += chargeString + "   |   "
-    }
-
-    if centerBuffer != "%{c}" {
-        printBuffer += centerBuffer[:len(centerBuffer)-4]
-    }
-
-    if rightBuffer != "%{r}" {
-        printBuffer += rightBuffer[:len(rightBuffer)-4]
+    if buffers[2] != "%{r}" {
+        printBuffer += buffers[2][:len(buffers[2])-len(elementSeperator)]
     }
 
     if printBuffer != "" {
-        printBuffer = printBuffer
         fmt.Println(printBuffer)
     }
 }
