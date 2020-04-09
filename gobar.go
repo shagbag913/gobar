@@ -1,6 +1,7 @@
 package main
 
 import (
+    "time"
     "strings"
     "fmt"
 )
@@ -49,6 +50,9 @@ func main() {
             }
         }
     }
+
+    /* Start config updated checker */
+    go checkConfigUpdate()
 
     /* Block main thread and let goroutines do everything */
     select { }
@@ -103,5 +107,23 @@ func printBuffer() {
 
     if printBuffer != "" {
         fmt.Println(printBuffer)
+    }
+}
+
+func checkConfigUpdate() {
+    for {
+        leftModules := getConfValue("main;modules_left")
+        centerModules := getConfValue("main;modules_center")
+        rightModules := getConfValue("main;modules_right")
+
+        if leftModules != enabledModules[0] || centerModules != enabledModules[1] ||
+                rightModules != enabledModules[2] {
+            enabledModules[0] = leftModules
+            enabledModules[1] = centerModules
+            enabledModules[2] = rightModules
+            printBuffer()
+        }
+
+        time.Sleep(1 * time.Second)
     }
 }
