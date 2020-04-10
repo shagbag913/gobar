@@ -117,20 +117,31 @@ func printBuffer() {
     }
 }
 
+/* Returns true if a value was changed */
+func updateConfigValues() bool {
+
+    leftModules := getConfValue("main;modules_left", defaultEnabledModules[0])
+    centerModules := getConfValue("main;modules_center", defaultEnabledModules[1])
+    rightModules := getConfValue("main;modules_right", defaultEnabledModules[2])
+
+    if leftModules != enabledModules[0] || centerModules != enabledModules[1] ||
+            rightModules != enabledModules[2] {
+        enabledModules[0] = leftModules
+        enabledModules[1] = centerModules
+        enabledModules[2] = rightModules
+        return true
+    }
+    return false
+}
+
 func checkConfigUpdate() {
     for {
-        leftModules := getConfValue("main;modules_left", defaultEnabledModules[0])
-        centerModules := getConfValue("main;modules_center", defaultEnabledModules[1])
-        rightModules := getConfValue("main;modules_right", defaultEnabledModules[2])
-
-        if leftModules != enabledModules[0] || centerModules != enabledModules[1] ||
-                rightModules != enabledModules[2] {
-            enabledModules[0] = leftModules
-            enabledModules[1] = centerModules
-            enabledModules[2] = rightModules
+        updated := updateConfigValues()
+        if updated {
             printBuffer()
         }
 
-        time.Sleep(1 * time.Second)
+        time.Sleep(time.Second * 1)
     }
 }
+
