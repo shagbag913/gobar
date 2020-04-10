@@ -22,6 +22,13 @@ var buffers = [3]string{"%{l}", "%{c}", "%{r}"}
 /* List of modules to enable for left, center, and right */
 var enabledModules [3]string
 
+/* List of default modules to enable for left, center, and right */
+var defaultEnabledModules = [3]string{
+    "bspwm",
+    "time,date",
+    "brightness,volume,used_memory,net,charge",
+}
+
 /* Buffer element seperator */
 var elementSeperator = "   |   "
 
@@ -38,9 +45,9 @@ func main() {
         "used_memory": setMemoryString,
     }
 
-    enabledModules[0] = getConfValue("main;modules_left")
-    enabledModules[1] = getConfValue("main;modules_center")
-    enabledModules[2] = getConfValue("main;modules_right")
+    enabledModules[0] = getConfValue("main;modules_left", defaultEnabledModules[0])
+    enabledModules[1] = getConfValue("main;modules_center", defaultEnabledModules[1])
+    enabledModules[2] = getConfValue("main;modules_right", defaultEnabledModules[2])
 
     for moduleString, moduleFunction := range moduleMap {
         for _, moduleSide := range enabledModules {
@@ -112,9 +119,9 @@ func printBuffer() {
 
 func checkConfigUpdate() {
     for {
-        leftModules := getConfValue("main;modules_left")
-        centerModules := getConfValue("main;modules_center")
-        rightModules := getConfValue("main;modules_right")
+        leftModules := getConfValue("main;modules_left", defaultEnabledModules[0])
+        centerModules := getConfValue("main;modules_center", defaultEnabledModules[1])
+        rightModules := getConfValue("main;modules_right", defaultEnabledModules[2])
 
         if leftModules != enabledModules[0] || centerModules != enabledModules[1] ||
                 rightModules != enabledModules[2] {

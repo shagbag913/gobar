@@ -85,7 +85,7 @@ func setChargeString() {
         isCharging := isCharging(statusFile)
 
         sleepTime := 10
-        if !(isCharging && getConfBool("battery;animate_glyph_when_charging")) {
+        if !(isCharging && getConfBool("battery;animate_glyph_when_charging", false)) {
             /* Reset index counter */
             chargingIndexCounter = -1
         } else {

@@ -1,6 +1,7 @@
 package main
 
 import (
+    "strconv"
     "bufio"
     "fmt"
     "os"
@@ -50,7 +51,7 @@ func formatConfString(str string) string {
     return string(newString)
 }
 
-func getConfValue(flag string) string {
+func getConfValue(flag, defaultValue string) string {
     file, err := openConfigFile()
     if logFatal(err) {
         return ""
@@ -84,9 +85,13 @@ func getConfValue(flag string) string {
         }
     }
 
-    return string(value)
+    if string(value) != "" {
+        return string(value)
+    } else {
+        return defaultValue
+    }
 }
 
-func getConfBool(flag string) bool {
-    return getConfValue(flag) == "true"
+func getConfBool(flag string, defaultValue bool) bool {
+    return getConfValue(flag, strconv.FormatBool(defaultValue)) == "true"
 }

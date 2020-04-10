@@ -28,7 +28,7 @@ func setTimeString() {
         minute, hour, second := tNow.Minute(), tNow.Hour(), tNow.Second()
 
         /* 12 hour time */
-        if getConfBool("time;12_hour_time") {
+        if getConfBool("time;12_hour_time", true) {
             if hour > 12 {
                 hour -= 12
             } else if hour == 0 {
@@ -42,7 +42,7 @@ func setTimeString() {
         }
         newTimeString += strconv.Itoa(minute)
 
-        showSeconds := getConfBool("time;show_seconds")
+        showSeconds := getConfBool("time;show_seconds", false)
         if showSeconds {
             newTimeString += ":"
             if second < 10 {
