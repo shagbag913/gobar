@@ -97,3 +97,8 @@ func getConfValue(flag, defaultValue string) string {
 func getConfBool(flag string, defaultValue bool) bool {
     return getConfValue(flag, strconv.FormatBool(defaultValue)) == "true"
 }
+
+func getConfInt(flag string, defaultValue int) int {
+    valueInt, _ := strconv.Atoi(getConfValue(flag, strconv.Itoa(defaultValue)))
+    return valueInt
+}

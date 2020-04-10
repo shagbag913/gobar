@@ -29,6 +29,10 @@ var defaultEnabledModules = [3]string{
     "brightness,volume,used_memory,net,charge",
 }
 
+/* Left and right padding */
+var leftPadding int
+var rightPadding int
+
 /* Buffer element seperator */
 var elementSeperator = "   |   "
 
@@ -83,9 +87,12 @@ func printBuffer() {
 
     printBuffer := ""
 
-    /* clear buffers */
+    /* Reset buffers */
     for i := range buffers {
         buffers[i] = buffers[i][:4]
+        if i == 0 {
+            buffers[i] = buffers[i] + strings.Repeat(" ", leftPadding)
+        }
     }
 
     for side, enabledModulesSide := range enabledModules {
@@ -98,7 +105,7 @@ func printBuffer() {
      * A space is left between buffers to prevent status strings containing
      * percentage signs from conflicting from the side identifier
      */
-    if buffers[0] != "%{l}" {
+    if strings.ReplaceAll(buffers[0], " ", "") != "%{l}" {
         printBuffer += buffers[0][:len(buffers[0])-len(elementSeperator)+1]
     }
 
@@ -108,6 +115,7 @@ func printBuffer() {
 
     if buffers[2] != "%{r}" {
         printBuffer += buffers[2][:len(buffers[2])-len(elementSeperator)+1]
+        printBuffer += strings.Repeat(" ", rightPadding)
     }
 
     if printBuffer != "" {
@@ -122,11 +130,20 @@ func updateConfigValues() bool {
     centerModules := getConfValue("main;modules_center", defaultEnabledModules[1])
     rightModules := getConfValue("main;modules_right", defaultEnabledModules[2])
 
+    paddingLeft := getConfInt("main;left_padding", 0)
+    paddingRight := getConfInt("main;right_padding", 0)
+
     if leftModules != enabledModules[0] || centerModules != enabledModules[1] ||
             rightModules != enabledModules[2] {
         enabledModules[0] = leftModules
         enabledModules[1] = centerModules
         enabledModules[2] = rightModules
+        return true
+    }
+
+    if paddingLeft != leftPadding || paddingRight != rightPadding {
+        leftPadding = paddingLeft
+        rightPadding = paddingRight
         return true
     }
 
