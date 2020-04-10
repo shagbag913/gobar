@@ -45,9 +45,7 @@ func main() {
         "used_memory": setMemoryString,
     }
 
-    enabledModules[0] = getConfValue("main;modules_left", defaultEnabledModules[0])
-    enabledModules[1] = getConfValue("main;modules_center", defaultEnabledModules[1])
-    enabledModules[2] = getConfValue("main;modules_right", defaultEnabledModules[2])
+    updateConfigValues()
 
     for moduleString, moduleFunction := range moduleMap {
         for _, moduleSide := range enabledModules {
@@ -131,13 +129,13 @@ func updateConfigValues() bool {
         enabledModules[2] = rightModules
         return true
     }
+
     return false
 }
 
 func checkConfigUpdate() {
     for {
-        updated := updateConfigValues()
-        if updated {
+        if updateConfigValues() {
             printBuffer()
         }
 

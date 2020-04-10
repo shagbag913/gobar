@@ -46,6 +46,8 @@ func formatConfString(str string) string {
             newString = append(newString, str[i])
         } else if str[i] == ';' || str[i] == '=' || str[i] == '_' || str[i] == ',' {
             newString = append(newString, str[i])
+        } else if str[i] >= '0' && str[i] <= '9' {
+            newString = append(newString, str[i])
         }
     }
     return string(newString)
