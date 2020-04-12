@@ -42,11 +42,7 @@ func openConfigFile() (*os.File, error) {
 func formatConfString(str string) string {
     newString := make([]byte, 0)
     for i := range str {
-        if str[i] >= 'a' && str[i] <= 'z' || str[i] <= 'A' && str[i] >= 'Z' {
-            newString = append(newString, str[i])
-        } else if str[i] == ';' || str[i] == '=' || str[i] == '_' || str[i] == ',' {
-            newString = append(newString, str[i])
-        } else if str[i] >= '0' && str[i] <= '9' {
+        if str[i] >= '!' && str[i] <= '~' {
             newString = append(newString, str[i])
         }
     }

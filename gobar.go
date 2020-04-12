@@ -34,7 +34,7 @@ var leftPadding int
 var rightPadding int
 
 /* Buffer element seperator */
-var elementSeperator = "   |   "
+var elementSeperator = "|"
 
 func main() {
     /* Map of module names and their corresponding goroutine */
@@ -69,7 +69,7 @@ func main() {
 
 func addToBuffer(element string, bufferIndex int) {
     if element != "" {
-        buffers[bufferIndex] += element + elementSeperator
+        buffers[bufferIndex] += element + "   " + elementSeperator + "   "
     }
 }
 
@@ -106,15 +106,15 @@ func printBuffer() {
      * percentage signs from conflicting from the side identifier
      */
     if strings.ReplaceAll(buffers[0], " ", "") != "%{l}" {
-        printBuffer += buffers[0][:len(buffers[0])-len(elementSeperator)+1]
+        printBuffer += buffers[0][:len(buffers[0])-(len(elementSeperator)+6)+1]
     }
 
     if buffers[1] != "%{c}" {
-        printBuffer += buffers[1][:len(buffers[1])-len(elementSeperator)+1]
+        printBuffer += buffers[1][:len(buffers[1])-(len(elementSeperator)+6)+1]
     }
 
     if buffers[2] != "%{r}" {
-        printBuffer += buffers[2][:len(buffers[2])-len(elementSeperator)+1]
+        printBuffer += buffers[2][:len(buffers[2])-(len(elementSeperator)+6)+1]
         printBuffer += strings.Repeat(" ", rightPadding)
     }
 
@@ -133,6 +133,8 @@ func updateConfigValues() bool {
     paddingLeft := getConfInt("main;left_padding", 0)
     paddingRight := getConfInt("main;right_padding", 0)
 
+    seperator := getConfValue("main;item_seperator", "|")
+
     if leftModules != enabledModules[0] || centerModules != enabledModules[1] ||
             rightModules != enabledModules[2] {
         enabledModules[0] = leftModules
@@ -144,6 +146,11 @@ func updateConfigValues() bool {
     if paddingLeft != leftPadding || paddingRight != rightPadding {
         leftPadding = paddingLeft
         rightPadding = paddingRight
+        return true
+    }
+
+    if seperator != elementSeperator {
+        elementSeperator = seperator
         return true
     }
 
