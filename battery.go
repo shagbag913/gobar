@@ -7,19 +7,18 @@ import (
 )
 
 func getBatteryPercentGlyphIndex(batteryPercentage, overrideIndex int) int {
-    if overrideIndex >= 0 {
+    switch {
+    case overrideIndex >= 0:
         return overrideIndex
-    }
-
-    if batteryPercentage >= 90 {
+    case batteryPercentage >= 90:
         return 4
-    } else if batteryPercentage >= 75 {
+    case batteryPercentage >= 75:
         return 3
-    } else if batteryPercentage >= 50 {
+    case batteryPercentage >= 50:
         return 2
-    } else if batteryPercentage >= 25 {
+    case batteryPercentage >= 25:
         return 1
-    } else {
+    default:
         return 0
     }
 }
@@ -84,7 +83,6 @@ func setChargeString() {
 
         isCharging := isCharging(statusFile)
 
-        sleepTime := 10
         if !(isCharging && getConfBool("battery;animate_glyph_when_charging", false)) {
             /* Reset index counter */
             chargingIndexCounter = -1
@@ -94,8 +92,6 @@ func setChargeString() {
             } else {
                 chargingIndexCounter++
             }
-
-            sleepTime = 2
         }
 
         newChargeString := getBatteryPercentWithGlyph(chargeInt, chargingIndexCounter, isCharging)
@@ -105,6 +101,6 @@ func setChargeString() {
             printBuffer()
         }
 
-        time.Sleep(time.Duration(sleepTime) * time.Second)
+        time.Sleep(2 * time.Second)
     }
 }

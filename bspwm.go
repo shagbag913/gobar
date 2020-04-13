@@ -63,18 +63,14 @@ func printNewBspwmStatusBuffer() {
     wsIndx := 1
     bspwmStatus = ""
     for _, e := range statusFromSocket {
-        switch e {
-        case 'f':
-            wsIndx++
-        case 'F':
-            fallthrough
-        case 'O':
+        if !strings.Contains("FOfo", string(e)) {
+            continue
+        } else if e == 'O' || e == 'F' {
             bspwmStatus += " %{+u}  " + strconv.Itoa(wsIndx) + "  %{-u} |"
-            wsIndx++
-        case 'o':
+        } else if e == 'o' {
             bspwmStatus += "   " + strconv.Itoa(wsIndx) + "   |"
-            wsIndx++
         }
+        wsIndx++
     }
 
     /* Remove ending spacer */
