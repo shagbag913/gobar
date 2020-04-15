@@ -65,10 +65,14 @@ func printNewBspwmStatusBuffer() {
     for _, e := range statusFromSocket {
         if !strings.Contains("FOfo", string(e)) {
             continue
-        } else if e == 'O' || e == 'F' {
+        }
+
+        wsIndxString := strconv.Itoa(wsIndx)
+
+        if e == 'O' || e == 'F' {
             bspwmStatus += " %{+u}  " + strconv.Itoa(wsIndx) + "  %{-u} |"
         } else if e == 'o' {
-            bspwmStatus += "   " + strconv.Itoa(wsIndx) + "   |"
+            bspwmStatus += "%{A:bspc desktop -f ^" + wsIndxString + ":}   " + wsIndxString + "   %{A}|"
         }
         wsIndx++
     }
