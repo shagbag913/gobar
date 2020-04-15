@@ -125,10 +125,15 @@ func printBuffer() {
 
 /* Returns true if a value was changed */
 func updateConfigValues() bool {
+    leftModules := getConfValue("main;modules_left", "")
+    centerModules := getConfValue("main;modules_center", "")
+    rightModules := getConfValue("main;modules_right", "")
 
-    leftModules := getConfValue("main;modules_left", defaultEnabledModules[0])
-    centerModules := getConfValue("main;modules_center", defaultEnabledModules[1])
-    rightModules := getConfValue("main;modules_right", defaultEnabledModules[2])
+    if leftModules == "" && centerModules == "" && rightModules == "" {
+        leftModules = defaultEnabledModules[0]
+        centerModules = defaultEnabledModules[1]
+        rightModules = defaultEnabledModules[2]
+    }
 
     paddingLeft := getConfInt("main;left_padding", 0)
     paddingRight := getConfInt("main;right_padding", 0)
