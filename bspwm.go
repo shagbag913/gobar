@@ -62,7 +62,11 @@ func readBspwmSocket() {
 func printNewBspwmStatusBuffer() {
     wsIndx := 1
     bspwmStatus = ""
-    for _, e := range statusFromSocket {
+    for i, e := range statusFromSocket {
+        if statusFromSocket[i:i+2] == "LT" || statusFromSocket[i:i+2] == "LM" {
+            break
+        }
+
         if !strings.Contains("FOfo", string(e)) {
             continue
         }
