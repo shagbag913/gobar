@@ -75,7 +75,7 @@ func printNewBspwmStatusBuffer() {
         wsIndxString := strconv.Itoa(wsIndx)
 
         if e == 'O' || e == 'F' {
-            bspwmStatus += " %{+u}  " + strconv.Itoa(wsIndx) + "  %{-u} " + seperator
+            bspwmStatus += "  %{+u} " + strconv.Itoa(wsIndx) + " %{-u}  " + seperator
         } else if e == 'o' {
             bspwmStatus += "%{A:bspc desktop -f ^" + wsIndxString + ":}   " + wsIndxString
             bspwmStatus += "   %{A}" + seperator
