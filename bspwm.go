@@ -62,6 +62,7 @@ func readBspwmSocket() {
 func printNewBspwmStatusBuffer() {
     wsIndx := 1
     bspwmStatus = ""
+    seperator := getConfValue("bspwm;workspace_seperator", "|")
     for i, e := range statusFromSocket {
         if statusFromSocket[i:i+2] == "LT" || statusFromSocket[i:i+2] == "LM" {
             break
@@ -74,14 +75,15 @@ func printNewBspwmStatusBuffer() {
         wsIndxString := strconv.Itoa(wsIndx)
 
         if e == 'O' || e == 'F' {
-            bspwmStatus += " %{+u}  " + strconv.Itoa(wsIndx) + "  %{-u} |"
+            bspwmStatus += " %{+u}  " + strconv.Itoa(wsIndx) + "  %{-u} " + seperator
         } else if e == 'o' {
-            bspwmStatus += "%{A:bspc desktop -f ^" + wsIndxString + ":}   " + wsIndxString + "   %{A}|"
+            bspwmStatus += "%{A:bspc desktop -f ^" + wsIndxString + ":}   " + wsIndxString
+            bspwmStatus += "   %{A}" + seperator
         }
         wsIndx++
     }
 
     /* Remove ending spacer */
-    bspwmStatus = bspwmStatus[:len(bspwmStatus)-1]
+    bspwmStatus = bspwmStatus[:len(bspwmStatus)-len(seperator)]
     printBuffer()
 }
